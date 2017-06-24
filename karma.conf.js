@@ -39,8 +39,8 @@ module.exports = function (config) {
             { pattern: 'test/**/*.js', included: false, watched: true },
 
             // Karma will load these under /base/node_modules/...
-            { pattern: 'node_modules/code-writer/build/browser/index.js', included: false, watched: false },
-            { pattern: 'node_modules/generic-rbtree/build/browser/index.js', included: false, watched: false },
+            // { pattern: 'node_modules/code-writer/build/browser/index.js', included: false, watched: false },
+            // { pattern: 'node_modules/generic-rbtree/build/browser/index.js', included: false, watched: false },
             { pattern: 'node_modules/tslib/tslib.js', included: false, watched: false }
         ],
 

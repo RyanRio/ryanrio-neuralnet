@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["../../src/example/example.ts"],"sourcesContent":["export class Example {\r\n    public a: number;\r\n    constructor() {\r\n        this.a = 2;\r\n    }\r\n}\r\n"],"names":[],"mappings":";;;;;;AAAA,IAAA,OAAA,IAAA,YAAA;IAEI,SAAJ,OAAA,GAAA;QACQ,IAAI,CAAC,CAAC,GAAG,CAAC,CAAC;KACd;IACL,OAAA,OAAC,CAAD;CAAC,EAAD,CAAA;;;;;;;;;;;;"}

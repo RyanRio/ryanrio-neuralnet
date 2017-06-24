@@ -8,7 +8,7 @@ const substituteModulePaths = {
 export default {
     entry: 'build/module/index.js',
     sourceMap: true,
-    external: ['code-writer', 'generic-rbtree'],
+    external: [],
     plugins: [
         alias(substituteModulePaths),
         nodeResolve({
