@@ -1,7 +1,7 @@
 {
-    "name": "tslib-base",
-    "version": "0.0.0",
-    "description": "Template for TS Libraries",
+    "name": "@ryanrio/neuralnet",
+    "version": "1.0.0",
+    "description": "NeuralNetServer",
     "author": {
         "name": "Ryan Mitchell",
         "email": "ryan.mitchell@sps.edu"
@@ -23,8 +23,10 @@
         "url": "git://github.com/RyanRio/tslib-base.git"
     },
     "dependencies": {
+        "@ryanrio/matrix": "^1.0.1"
     },
     "scripts": {
+        "start": "trash test && tsc -p tsconfig.json && node test\\server.js",
         "build": "trash build && tsc -p tsconfig.main.json && tsc -p tsconfig.module.json && npm run build:browser",
         "build:browser": "rollup --config rollup.config.js --format umd --name \"tslibBase\" --output build/browser/index.js && sorcery -i build/browser/index.js",
         "lint": "tslint src/**/*.ts",
@@ -34,6 +36,7 @@
     },
     "devDependencies": {
         "@types/jasmine": "^2.5.51",
+        "@types/node": "^8.0.9",
         "concurrently": "^3.5.0",
         "jasmine-core": "2.6.3",
         "karma": "^1.7.0",
