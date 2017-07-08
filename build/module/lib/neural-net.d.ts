@@ -53,7 +53,6 @@ export declare class NeuralNet implements NeuralNetInterface {
     private dealWeights(weights);
     private dealTVal(tvals);
     private dealInput(input);
-    private getElements(matrix);
     /**
      * Change the prepreppednet to a JSON-stringify compatible format
      * @param net

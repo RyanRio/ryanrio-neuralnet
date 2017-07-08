@@ -85,35 +85,25 @@ export class NeuralNet implements NeuralNetInterface {
         const tensors = [];
         for (const layer of layers) {
             const size = [layer.rows, layer.cols];
-            const elements = this.getElements(layer);
+            const elements = layer.elements;
             tensors.push({ size, elements });
         }
         return tensors;
     }
     private dealWeights(weights: Matrix): Tensor {
         const size = [weights.rows, weights.cols];
-        const elements = this.getElements(weights);
+        const elements = weights.elements;
         return { size, elements };
     }
     private dealTVal(tvals: Matrix): Tensor {
         const size = [tvals.rows, tvals.cols];
-        const elements = this.getElements(tvals);
+        const elements = tvals.elements;
         return { size, elements };
     }
     private dealInput(input: Matrix): Tensor {
         const size = [input.rows, input.cols];
-        const elements = this.getElements(input);
+        const elements = input.elements;
         return { size, elements };
-    }
-    private getElements(matrix: Matrix): number[][] {
-        let elements: number[][] = [];
-        for (let i = 0; i < matrix.rows; i++) {
-            elements.push([]);
-            for (let j = 0; j < matrix.cols; j++) {
-                elements[i].push(matrix.getElement(i + 1, j + 1));
-            }
-        }
-        return elements;
     }
 
     /**

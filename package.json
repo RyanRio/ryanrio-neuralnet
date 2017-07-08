@@ -23,7 +23,7 @@
         "url": "git://github.com/RyanRio/ryanrio-neuralnet.git"
     },
     "dependencies": {
-        "@ryanrio/matrix": "^1.0.1"
+        "@ryanrio/matrix": "^1.2.1"
     },
     "scripts": {
         "startTrash": "trash test && tsc -p tsconfig.json && node test\\server.js",

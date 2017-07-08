@@ -45,35 +45,25 @@ var NeuralNet = (function () {
         for (var _i = 0, layers_1 = layers; _i < layers_1.length; _i++) {
             var layer = layers_1[_i];
             var size = [layer.rows, layer.cols];
-            var elements = this.getElements(layer);
+            var elements = layer.elements;
             tensors.push({ size: size, elements: elements });
         }
         return tensors;
     };
     NeuralNet.prototype.dealWeights = function (weights) {
         var size = [weights.rows, weights.cols];
-        var elements = this.getElements(weights);
+        var elements = weights.elements;
         return { size: size, elements: elements };
     };
     NeuralNet.prototype.dealTVal = function (tvals) {
         var size = [tvals.rows, tvals.cols];
-        var elements = this.getElements(tvals);
+        var elements = tvals.elements;
         return { size: size, elements: elements };
     };
     NeuralNet.prototype.dealInput = function (input) {
         var size = [input.rows, input.cols];
-        var elements = this.getElements(input);
+        var elements = input.elements;
         return { size: size, elements: elements };
-    };
-    NeuralNet.prototype.getElements = function (matrix) {
-        var elements = [];
-        for (var i = 0; i < matrix.rows; i++) {
-            elements.push([]);
-            for (var j = 0; j < matrix.cols; j++) {
-                elements[i].push(matrix.getElement(i + 1, j + 1));
-            }
-        }
-        return elements;
     };
     /**
      * Change the prepreppednet to a JSON-stringify compatible format
