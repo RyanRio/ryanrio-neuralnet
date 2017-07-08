@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var fs = require("fs");
+import * as fs from 'fs';
 var Logger = (function () {
     function Logger() {
         var thisa = this;
@@ -17,7 +15,7 @@ var Logger = (function () {
     };
     return Logger;
 }());
-exports.Logger = Logger;
+export { Logger };
 var ManagerLogger = (function () {
     function ManagerLogger(net) {
         this.timesSaved = 1;
@@ -33,4 +31,4 @@ var ManagerLogger = (function () {
     };
     return ManagerLogger;
 }());
-exports.ManagerLogger = ManagerLogger;
+export { ManagerLogger };

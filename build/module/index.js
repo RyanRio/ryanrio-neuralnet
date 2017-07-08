@@ -1,2 +1,3 @@
-export { Example } from './example/example';
-//# sourceMappingURL=index.js.map
+export { ManagerLogger } from './lib/Logger';
+export { NetFileManager } from './lib/NetFileManager';
+export { NeuralNet } from './lib/neural-net';

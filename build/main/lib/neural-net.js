@@ -1,67 +1,5 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('fs')) :
-	typeof define === 'function' && define.amd ? define(['exports', 'fs'], factory) :
-	(factory((global.tslibBase = global.tslibBase || {}),global.fs));
-}(this, (function (exports,fs) { 'use strict';
-
-var ManagerLogger = (function () {
-    function ManagerLogger(net) {
-        this.timesSaved = 1;
-        this.net = net;
-    }
-    ManagerLogger.prototype.log = function (logMessage) {
-        this.timesSaved++;
-        fs.appendFile('logs/log.txt', logMessage + "\n", function (err) {
-            if (err) {
-                throw err;
-            }
-        });
-    };
-    return ManagerLogger;
-}());
-
-var NetFileManager = (function () {
-    /**
-     * Upon contstruction the net is saved
-     * @param net;
-     */
-    function NetFileManager(net) {
-        this.net = net;
-        this.logger = new ManagerLogger(this.net);
-        this.save();
-    }
-    NetFileManager.prototype.save = function () {
-        var _this = this;
-        this.logger.log("Net was just saved: " + this.logger.timesSaved);
-        fs.exists("NetJSON/net.json", (function (exists$$1) {
-            if (exists$$1) {
-                fs.unlink("NetJSON/net.json", function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                    else {
-                        console.log("File exists, deleting and rewriting");
-                        fs.writeFile("NetJSON/net.json", _this.net.JSON, function (err) {
-                            if (err) {
-                                throw err;
-                            }
-                        });
-                    }
-                });
-            }
-            else {
-                console.log("File doesn't exist, writing");
-                fs.writeFile("NetJSON/net.json", _this.net.JSON, function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                });
-            }
-        }));
-    };
-    return NetFileManager;
-}());
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var NeuralNet = (function () {
     /**
      * Creates a NeuralNet which has a JSON representation
@@ -159,12 +97,4 @@ var NeuralNet = (function () {
     };
     return NeuralNet;
 }());
-
-exports.ManagerLogger = ManagerLogger;
-exports.NetFileManager = NetFileManager;
 exports.NeuralNet = NeuralNet;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-//# sourceMappingURL=index.js.map

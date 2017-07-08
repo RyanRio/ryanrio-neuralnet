@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var example_1 = require("./example/example");
-exports.Example = example_1.Example;
-//# sourceMappingURL=index.js.map
+var Logger_1 = require("./lib/Logger");
+exports.ManagerLogger = Logger_1.ManagerLogger;
+var NetFileManager_1 = require("./lib/NetFileManager");
+exports.NetFileManager = NetFileManager_1.NetFileManager;
+var neural_net_1 = require("./lib/neural-net");
+exports.NeuralNet = neural_net_1.NeuralNet;

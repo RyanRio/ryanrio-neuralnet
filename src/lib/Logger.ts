@@ -6,7 +6,7 @@ export interface LoggerInterface {
 
 import { NeuralNet } from './neural-net';
 
-abstract class Logger implements LoggerInterface {
+export abstract class Logger implements LoggerInterface {
     constructor() {
         const thisa = this;
         setInterval(function () {
