@@ -1,7 +1,8 @@
 import { matrix, Matrix } from '@ryanrio/matrix';
-import { NeuralNet } from './lib/neural-net';
+import { NeuralNet, NetSpec } from './lib/neural-net';
 import { NetFileManager } from './lib/NetFileManager';
 
+/*
 function test(): NetFileManager {
     let weights: Matrix = matrix([[.1, .2], [3, 2]]);
     let targetValues: Matrix = matrix([[.5, .2]]);
@@ -30,4 +31,9 @@ setTimeout(() => {
     managedNet.adjustNet({ weights: weightsChange });
     manager.save();
 }, 3000);
+*/
+const myNet = new NeuralNet(new NetSpec(2, 1, 2));
 
+setTimeout(() => {
+    const a = new NetFileManager(myNet);
+}, 5000);

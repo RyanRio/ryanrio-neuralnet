@@ -1,29 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var matrix_1 = require("@ryanrio/matrix");
 var neural_net_1 = require("./lib/neural-net");
 var NetFileManager_1 = require("./lib/NetFileManager");
-function test() {
-    var weights = matrix_1.matrix([[.1, .2], [3, 2]]);
-    var targetValues = matrix_1.matrix([[.5, .2]]);
-    var inputLayer = matrix_1.matrix([[1, 2]]);
-    var hiddenLayers = [matrix_1.matrix([[5, 6]]), matrix_1.matrix([[19, 12]])];
-    var net = {
-        weights: weights,
-        targetValues: targetValues,
-        inputLayer: inputLayer,
-        hiddenLayers: hiddenLayers
+/*
+function test(): NetFileManager {
+    let weights: Matrix = matrix([[.1, .2], [3, 2]]);
+    let targetValues: Matrix = matrix([[.5, .2]]);
+    let inputLayer: Matrix = matrix([[1, 2]]);
+    let hiddenLayers: Matrix[] = [matrix([[5, 6]]), matrix([[19, 12]])];
+
+    const net = {
+        weights,
+        targetValues,
+        inputLayer,
+        hiddenLayers
     };
-    var myNet = new neural_net_1.NeuralNet(net);
-    var myManager = new NetFileManager_1.NetFileManager(myNet);
+
+    const myNet = new NeuralNet(net);
+    const myManager = new NetFileManager(myNet);
     return myManager;
 }
-var manager;
+let manager: NetFileManager;
 manager = test();
-setTimeout(function () {
-    var managedNet = manager.net;
-    var weightsChange = matrix_1.matrix([[0, .2], [3, 2]]);
+
+
+setTimeout(() => {
+    const managedNet = manager.net;
+    const weightsChange = matrix([[0, .2], [3, 2]]);
     console.log("updating net");
     managedNet.adjustNet({ weights: weightsChange });
     manager.save();
 }, 3000);
+*/
+var myNet = new neural_net_1.NeuralNet(new neural_net_1.NetSpec(2, 1, 2));
+setTimeout(function () {
+    var a = new NetFileManager_1.NetFileManager(myNet);
+}, 5000);
