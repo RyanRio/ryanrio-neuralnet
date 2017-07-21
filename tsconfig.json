@@ -62,5 +62,8 @@
   "include": [
     "src/**/*.ts"
   ],
+  "exclude": [
+    "src/**/neural-net.ts"
+  ],
   "compileOnSave": false
 }

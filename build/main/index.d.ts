@@ -1,3 +1,1 @@
-export { ManagerLogger } from './lib/Logger';
-export { NetFileManager } from './lib/NetFileManager';
-export { NeuralNet, NeuralNetInterface, OptionalNetInterface, PreppedNet, PrePreppedNet, Tensor } from './lib/neural-net';
+export { AugmentedVector, Matrix, MatrixI, NeuralNet, theta, Vector, Weight, WeightLayer, WeightVector } from './lib/neural-net';

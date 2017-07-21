@@ -1,157 +1,145 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('fs')) :
 	typeof define === 'function' && define.amd ? define(['exports', 'fs'], factory) :
-	(factory((global.tslibBase = global.tslibBase || {}),global.fs));
+	(factory((global.neuralnet = global.neuralnet || {}),global.fs));
 }(this, (function (exports,fs) { 'use strict';
 
-var ManagerLogger = (function () {
-    function ManagerLogger(net) {
-        this.timesSaved = 1;
-        this.net = net;
+var Matrix = (function () {
+    function Matrix(inVector) {
+        if (inVector) {
+            this.postitionedVectors = [{ vector: inVector, posInMatrix: 1 }];
+        }
+        else {
+            this.postitionedVectors = [];
+        }
     }
-    ManagerLogger.prototype.log = function (logMessage) {
-        this.timesSaved++;
-        fs.appendFile('logs/log.txt', logMessage + "\n", function (err) {
-            if (err) {
-                throw err;
-            }
-        });
+    Matrix.prototype.next = function (inVector) {
+        this.postitionedVectors.push({ vector: inVector, posInMatrix: this.postitionedVectors.length + 1 });
     };
-    return ManagerLogger;
-}());
-
-var NetFileManager = (function () {
-    /**
-     * Upon contstruction the net is saved
-     * @param net;
-     */
-    function NetFileManager(net) {
-        this.net = net;
-        this.logger = new ManagerLogger(this.net);
-        this.save();
-    }
-    NetFileManager.prototype.save = function () {
-        var _this = this;
-        this.logger.log("Net was just saved: " + this.logger.timesSaved);
-        fs.exists("NetJSON/net.json", (function (exists$$1) {
-            if (exists$$1) {
-                fs.unlink("NetJSON/net.json", function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                    else {
-                        console.log("File exists, deleting and rewriting");
-                        fs.writeFile("NetJSON/net.json", _this.net.JSON, function (err) {
-                            if (err) {
-                                throw err;
-                            }
-                        });
-                    }
-                });
+    Object.defineProperty(Matrix.prototype, "vectors", {
+        get: function () {
+            var realVectors = [];
+            for (var _i = 0, _a = this.postitionedVectors; _i < _a.length; _i++) {
+                var vector = _a[_i];
+                realVectors.push(vector.vector);
             }
-            else {
-                console.log("File doesn't exist, writing");
-                fs.writeFile("NetJSON/net.json", _this.net.JSON, function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                });
-            }
-        }));
-    };
-    return NetFileManager;
+            return realVectors;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Matrix;
 }());
-
 var NeuralNet = (function () {
-    /**
-     * Creates a NeuralNet which has a JSON representation
-     * @param net
-     */
-    function NeuralNet(net) {
-        this.prePreppedNet = net;
-        this.preppedNet = this.prepJSON(this.prePreppedNet);
-        this.JSON = JSON.stringify(this.preppedNet);
+    function NeuralNet(inputElements, hiddenLayers, numOutcomes, learningRate) {
+        this.weightMatrices = [];
+        this.numInputs = inputElements;
+        this.numOutcomes = numOutcomes;
+        this.lr = learningRate;
+        /**
+         * assemble the weights matrix [theta]
+         * each individual weight is represented by theta (layerNumber) (toNumber => j) (fromNumber => k)
+         * thus theta is a vector which, for any given theta besides in between the hidden and output layer, contains the number of weights equal
+         * to (numinputElements + 1 (+1 because of bias node)) * numInputElements
+         */
+        /**
+         * assembling Theta
+         */
+        var theta = [];
+        for (var i = 1; i <= hiddenLayers; i++) {
+            var layer_1 = i;
+            /**
+             * assembling a WeightLayer
+             */
+            var weightLayer_1 = Object.create([]);
+            // + 2 because +1 to account for indexing and another +1 to account for biased node
+            for (var k = 1; k < inputElements + 2; k++) {
+                /**
+                 * assembling a WeightVector
+                 */
+                var weightVector = Object.create([]);
+                for (var j = 1; j < inputElements + 1; j++) {
+                    var weightVal = Math.random();
+                    weightVector.push({ value: weightVal, jVal: j, kVal: k, layer: layer_1 });
+                }
+                weightLayer_1.push(weightVector);
+            }
+            theta.push(weightLayer_1);
+        }
+        /**
+         * now need to add the final layer of weights which are in-between the last hidden layer and the output layer
+         * weight layer number is going to be the number of hidden layers + 1
+         */
+        var layer = hiddenLayers + 1;
+        var weightLayer = Object.create([]);
+        // + 2 because +1 to account for indexing and another +1 to account for biased node
+        for (var k = 1; k < inputElements + 2; k++) {
+            /**
+             * assembling a WeightVector
+             */
+            var weightVector = Object.create([]);
+            for (var j = 1; j < numOutcomes + 1; j++) {
+                var weightVal = Math.random();
+                weightVector.push({ value: weightVal, jVal: j, kVal: k, layer: layer });
+            }
+            weightLayer.push(weightVector);
+        }
+        theta.push(weightLayer);
+        this._weights = theta;
+        // creating the weights matrix
+        /**
+         * Each vector in the weights matrix will be made up of weights [
+         * theta(jk), theta(j+1, k), theta(j+2, k)
+         * ]
+         */
+        // Loop for assembling multiple matrices
+        for (var i = 0; i < this._weights.length; i++) {
+            var currentLayer = this._weights[i];
+            var matrix = new Matrix();
+            for (var _i = 0, currentLayer_1 = currentLayer; _i < currentLayer_1.length; _i++) {
+                var weightArray = currentLayer_1[_i];
+                var vector = [];
+                for (var _a = 0, weightArray_1 = weightArray; _a < weightArray_1.length; _a++) {
+                    var weight = weightArray_1[_a];
+                    vector.push(weight.value);
+                }
+                matrix.next(vector);
+            }
+            this.weightMatrices.push(matrix);
+        }
     }
     /**
-     * Changes the prePreppedNet and then update the PreppedNet and the JSON
-     * @param optionalNet Object which contains what you want to change about the prePreppedNet
+     * Use 'layer' to choose what layer of weights you want
+     * Use 'kVal' to choose from all weights that have that kVal, ie the vector that corresponds to the from node
+     * Use 'jVal' to choose what toNode the weight is going to.
+     * Note that when thinking about this function, you should consider the biased node ->
+     * ie weightVal(1, 3, 2) will give you the weight of the first weight layer that goes from the third node of the input layer
+     * to the second node of the hidden layer (but first node not including the hidden layer).
+     * But, its jVal will be 1 to avoid confusion later on.
+     * @param jVal
+     * @param kVal
+     * @param layer
      */
-    NeuralNet.prototype.adjustNet = function (optionalNet) {
-        var weights = optionalNet.weights;
-        var tVals = optionalNet.targetValues;
-        var inputs = optionalNet.inputLayer;
-        var hiddenLayers = optionalNet.hiddenLayers;
-        if (weights) {
-            this.prePreppedNet.weights = weights;
-        }
-        if (tVals) {
-            this.prePreppedNet.targetValues = tVals;
-        }
-        if (inputs) {
-            this.prePreppedNet.inputLayer = inputs;
-        }
-        if (hiddenLayers) {
-            this.prePreppedNet.hiddenLayers = hiddenLayers;
-        }
-        this.update();
+    NeuralNet.prototype.weightVal = function (layer, kVal, jVal) {
+        var weight = this._weights[layer - 1][kVal - 1][jVal - 2];
+        return weight;
     };
     /**
-     * Updates the preppedNet and JSON using the current prePreppedNet
+     *
+     * @param filename Desired name of the JSON file, ie "net.json"
+     * @param path Desired location of the file, ie "./output/"
      */
-    NeuralNet.prototype.update = function () {
-        this.preppedNet = this.prepJSON(this.prePreppedNet);
-        this.JSON = JSON.stringify(this.preppedNet);
-    };
-    NeuralNet.prototype.dealHidden = function (layers) {
-        var tensors = [];
-        for (var _i = 0, layers_1 = layers; _i < layers_1.length; _i++) {
-            var layer = layers_1[_i];
-            var size = [layer.rows, layer.cols];
-            var elements = layer.elements;
-            tensors.push({ size: size, elements: elements });
+    NeuralNet.prototype.toJSON = function (filename, path, data) {
+        var fullPath = path + filename;
+        if (fs.existsSync(fullPath)) {
+            fs.unlinkSync(fullPath);
+            fs.writeFileSync(fullPath, data);
         }
-        return tensors;
-    };
-    NeuralNet.prototype.dealWeights = function (weights) {
-        var size = [weights.rows, weights.cols];
-        var elements = weights.elements;
-        return { size: size, elements: elements };
-    };
-    NeuralNet.prototype.dealTVal = function (tvals) {
-        var size = [tvals.rows, tvals.cols];
-        var elements = tvals.elements;
-        return { size: size, elements: elements };
-    };
-    NeuralNet.prototype.dealInput = function (input) {
-        var size = [input.rows, input.cols];
-        var elements = input.elements;
-        return { size: size, elements: elements };
-    };
-    /**
-     * Change the prepreppednet to a JSON-stringify compatible format
-     * @param net
-     */
-    NeuralNet.prototype.prepJSON = function (net) {
-        var weightsJSON = this.dealWeights(net.weights);
-        var targetValuesJSON = this.dealTVal(net.targetValues);
-        var inputLayerJSON = this.dealInput(net.inputLayer);
-        var hiddenLayersJSON = this.dealHidden(net.hiddenLayers);
-        var weights = weightsJSON;
-        var targets = targetValuesJSON;
-        var inputs = inputLayerJSON;
-        var hiddenLayers = hiddenLayersJSON;
-        return {
-            weights: weights,
-            targets: targets,
-            inputs: inputs,
-            hiddenLayers: hiddenLayers
-        };
     };
     return NeuralNet;
 }());
 
-exports.ManagerLogger = ManagerLogger;
-exports.NetFileManager = NetFileManager;
+exports.Matrix = Matrix;
 exports.NeuralNet = NeuralNet;
 
 Object.defineProperty(exports, '__esModule', { value: true });
