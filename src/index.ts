@@ -1,1 +1,2 @@
-export { AugmentedVector, Matrix, MatrixI, NeuralNet, theta, Vector, Weight, WeightLayer, WeightVector } from './lib/neural-net';
+export { NeuralNet, theta, Weight, WeightLayer, WeightVector } from './lib/neural-net';
+export { Vector, AugmentedVector, Matrix, MatrixI } from './lib/net-matrix';

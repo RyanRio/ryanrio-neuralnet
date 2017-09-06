@@ -2,9 +2,45 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var neural_net_1 = require("./neural-net");
 var assert = require("assert");
+var fs = require("fs");
 describe("neural-net(rw)", function () {
+    describe("csv parsing", function () {
+        var net = new neural_net_1.NeuralNet(6, 1, 4, 1);
+        var csv = net.TrainWithCSV("./ReferenceFiles/testCarTest.csv", [
+            { name: "buying", values: ["vhigh", "high", "med", "low"] },
+            { name: "maint", values: ["vhigh", "high", "med", "low"] },
+            { name: "doors", values: [2, 3, 4, "5more"] },
+            { name: "persons", values: [2, 4, "more"] },
+            { name: "lug_boot", values: ["small", "med", "big"] },
+            { name: "safety", values: ["low", "med", "high"] }
+        ], ["unacc", "acc", "good", "vgood"]);
+        fs.writeFileSync("weightsAfter", JSON.stringify(csv));
+        it("target vectors are made correctly", function () {
+            var targets = net.targetPossibilities;
+            assert.deepEqual(targets[0].serialization, [1, 0, 0, 0]);
+            assert.deepEqual(targets[0].name, "unacc");
+            assert.deepEqual(targets[1].serialization, [0, 1, 0, 0]);
+            assert.deepEqual(targets[1].name, "acc");
+            assert.deepEqual(targets[2].serialization, [0, 0, 1, 0]);
+            assert.deepEqual(targets[2].name, "good");
+            assert.deepEqual(targets[3].serialization, [0, 0, 0, 1]);
+            assert.deepEqual(targets[3].name, "vgood");
+        });
+        it("check attribute mapping", function () {
+            fs.writeFileSync("./ReferenceFiles/net_attribute_map.txt", JSON.stringify(net.getAttributeMapping()));
+        });
+        it("write out preBackProp weights and postBackProp weights", function () {
+            var postWeights = net.weightMatrices;
+            var postBackPropWeights = [];
+            for (var _i = 0, postWeights_1 = postWeights; _i < postWeights_1.length; _i++) {
+                var weight = postWeights_1[_i];
+                postBackPropWeights.push(weight.vectors);
+            }
+            fs.writeFileSync("./ReferenceFiles/postBackPropWeights.txt", JSON.stringify(postBackPropWeights));
+        });
+    });
     describe("weight matrix assembly test", function () {
-        var net = new neural_net_1.default(2, 1, 2, 1);
+        var net = new neural_net_1.NeuralNet(2, 1, 2, 1);
         it("should get created correctly", function () {
             assert.deepEqual(net.weightMatrices.length, 2);
         });
@@ -19,14 +55,14 @@ describe("neural-net(rw)", function () {
     });
     describe("weight-getting testing", function () {
         it("should get the correct weight, #1", function () {
-            var net = new neural_net_1.default(2, 1, 2, 1);
+            var net = new neural_net_1.NeuralNet(2, 1, 2, 1);
             var weight = net.weightVal(1, 3, 2);
             assert.deepEqual(weight.jVal, 1);
             assert.deepEqual(weight.kVal, 3);
             assert.deepEqual(weight.layer, 1);
         });
         it("should get the correct weight, #2", function () {
-            var net = new neural_net_1.default(2, 1, 2, 1);
+            var net = new neural_net_1.NeuralNet(2, 1, 2, 1);
             var weight = net.weightVal(1, 3, 3);
             assert.deepEqual(weight.jVal, 2);
             assert.deepEqual(weight.kVal, 3);
@@ -34,7 +70,7 @@ describe("neural-net(rw)", function () {
         });
     });
     describe("_weights-test with one hidden layer", function () {
-        var net = new neural_net_1.default(2, 1, 2, 1);
+        var net = new neural_net_1.NeuralNet(2, 1, 2, 1);
         it("number of weight layers", function () {
             assert.deepEqual(net._weights.length, 2);
         });
@@ -112,7 +148,7 @@ describe("neural-net(rw)", function () {
         });
     });
     describe("_weights-test with two layers", function () {
-        var net = new neural_net_1.default(2, 2, 2, 1);
+        var net = new neural_net_1.NeuralNet(2, 2, 2, 1);
         it("number of weight layers", function () {
             assert.deepEqual(net._weights.length, 3);
         });
@@ -226,7 +262,7 @@ describe("neural-net(rw)", function () {
         });
     });
     describe("_weights test with non-equal input elements and output elements", function () {
-        var net = new neural_net_1.default(2, 2, 1, 1);
+        var net = new neural_net_1.NeuralNet(2, 2, 1, 1);
         it("number of weight layers", function () {
             assert.deepEqual(net._weights.length, 3);
         });
@@ -270,7 +306,7 @@ describe("neural-net(rw)", function () {
             var secondLayer = net._weights[1];
             assert.deepEqual(secondLayer.length, 3);
         });
-        it("examining _weights of second layer", function () {
+        it("examining weights of second layer", function () {
             var secondLayer = net._weights[1];
             // first ensure that there are the correct number of _weights in each vector of the first layer
             for (var _i = 0, secondLayer_2 = secondLayer; _i < secondLayer_2.length; _i++) {

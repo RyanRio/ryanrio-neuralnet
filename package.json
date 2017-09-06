@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@types/mocha": "^2.2.41",
+        "davinci-csv": "^0.9.12",
         "mocha": "^3.4.2"
     },
     "scripts": {
@@ -33,9 +34,9 @@
         "build:browser": "rollup --config rollup.config.js --format umd --name \"neuralnet\" --output build/browser/index.js && sorcery -i build/browser/index.js",
         "lint": "tslint src/**/*.ts",
         "mocha-test": "mocha \"test/**/*.test.js\"",
-        "test": "npm run lint && npm run unit && nyc check-coverage --lines 40 --functions 30 --branches 20",
-        "unit": "trash test && tsc -p tsconfig.json && karma start",
-        "watch": "concurrently -r --kill-others \"tsc -p tsconfig.json -w\" \"karma start\""
+        "test-trash": "npm run lint && npm run unit",
+        "test": "npm run lint && tsc -p tsconfig.json",
+        "unit": "trash test && tsc -p tsconfig.json"
     },
     "devDependencies": {
         "@types/node": "^8.0.9",

@@ -1,9 +1,51 @@
 import { NeuralNet } from './neural-net';
 import * as assert from 'assert';
+import * as fs from 'fs';
+import { parse } from '../../davinci-csv/CSV';
+import { Field } from '../../davinci-csv/CSV.d';
 
 
 
 describe("neural-net(rw)", () => {
+    describe("csv parsing", () => {
+        let net = new NeuralNet(6, 1, 4, 1);
+        const csv = net.TrainWithCSV("./ReferenceFiles/testCarTest.csv", [
+            { name: "buying", values: ["vhigh", "high", "med", "low"] },
+            { name: "maint", values: ["vhigh", "high", "med", "low"] },
+            { name: "doors", values: [2, 3, 4, "5more"] },
+            { name: "persons", values: [2, 4, "more"] },
+            { name: "lug_boot", values: ["small", "med", "big"] },
+            { name: "safety", values: ["low", "med", "high"] }
+        ],
+            ["unacc", "acc", "good", "vgood"]
+        );
+        fs.writeFileSync("weightsAfter", JSON.stringify(csv));
+        it("target vectors are made correctly", () => {
+            let targets = net.targetPossibilities;
+            assert.deepEqual(targets[0].serialization, [1, 0, 0, 0]);
+            assert.deepEqual(targets[0].name, "unacc");
+
+            assert.deepEqual(targets[1].serialization, [0, 1, 0, 0]);
+            assert.deepEqual(targets[1].name, "acc");
+
+            assert.deepEqual(targets[2].serialization, [0, 0, 1, 0]);
+            assert.deepEqual(targets[2].name, "good");
+
+            assert.deepEqual(targets[3].serialization, [0, 0, 0, 1]);
+            assert.deepEqual(targets[3].name, "vgood");
+        });
+        it("check attribute mapping", () => {
+            fs.writeFileSync("./ReferenceFiles/net_attribute_map.txt", JSON.stringify(net.getAttributeMapping()));
+        });
+        it("write out preBackProp weights and postBackProp weights", () => {
+            let postWeights = net.weightMatrices;
+            let postBackPropWeights = [];
+            for (let weight of postWeights) {
+                postBackPropWeights.push(weight.vectors);
+            }
+            fs.writeFileSync("./ReferenceFiles/postBackPropWeights.txt", JSON.stringify(postBackPropWeights));
+        });
+    });
     describe("weight matrix assembly test", () => {
         let net = new NeuralNet(2, 1, 2, 1);
         it("should get created correctly", () => {
@@ -302,7 +344,7 @@ describe("neural-net(rw)", () => {
             const secondLayer = net._weights[1];
             assert.deepEqual(secondLayer.length, 3);
         });
-        it("examining _weights of second layer", () => {
+        it("examining weights of second layer", () => {
             const secondLayer = net._weights[1];
             // first ensure that there are the correct number of _weights in each vector of the first layer
             for (let vector of secondLayer) {
